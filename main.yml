@@ -1,0 +1,41 @@
+--- 
+- hosts: ubuntu_servers
+  become: yes
+  tasks:
+
+  - name: Install some packages- Java and apt-transport-https
+    apt:
+      name: "{{ pacakges }}"
+      update_cache: yes
+    vars:
+      packages:
+      - default-jre
+      - apt-transport-https
+
+  - name: Add an apt signing key
+    apt_key:
+      url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      state: present
+
+  - name: Add elasticsearch repo into sources list
+    apt_repository:
+      repo: deb https://artifacts.elastic.co/packages/6.x/apt stable main
+      state: present
+
+  - name: Update repo and install elasticsearch
+    apt:
+      name: elasticsearch
+      update_cache: yes
+
+  - name: Reload systemd config
+    systemd: daemon_reload=yes
+
+  - name: Enable service elasticsearch and ensure it is not masked
+    systemd: 
+      name: elasticsearch
+      enabled: yes
+      masked: no
+
+  - name: ensure elasticsearch is running
+    systemd: state=started name=elasticsearch
+
