@@ -5,7 +5,7 @@
 
   - name: Install some packages- Java and apt-transport-https
     apt:
-      name: "{{ pacakges }}"
+      name: "{{ packages }}"
       update_cache: yes
     vars:
       packages:
